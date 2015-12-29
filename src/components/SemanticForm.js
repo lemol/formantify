@@ -1,4 +1,5 @@
-import Form from 'fromsy-react'
+import React from 'react'
+import { Form } from 'formsy-react'
 
 class SemanticForm extends Form {
 

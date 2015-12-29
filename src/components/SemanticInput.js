@@ -1,8 +1,14 @@
-import { Component } from 'react'
+import React from 'react'
+import SemanticComponent from './SemanticComponent'
 
+//@reactMixin.decorate(Mixin)
 class SemanticInput extends SemanticComponent {
   constructor(props) {
     super(props)
+  }
+
+  getType() {
+    return 'input'
   }
 
   element() {
@@ -10,7 +16,7 @@ class SemanticInput extends SemanticComponent {
       <input
         type='text'
         name={this.props.name}
-        onChange={this.changeValue.bind(this)}
+        onChange={this.handleChangeValue.bind(this)}
         value={this.getValue()}
         placeholder={this.state.schema.placeholder}
       />
@@ -20,6 +26,8 @@ class SemanticInput extends SemanticComponent {
   }
 
   render() {
-    super.render()
+    return super.render()
   }
 }
+
+export default SemanticInput

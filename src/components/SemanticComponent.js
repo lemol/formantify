@@ -1,6 +1,8 @@
-import { Component } from 'react'
+import React from 'react'
+import reactMixin from 'react-mixin'
+import { Mixin } from 'formsy-react'
 
-class SemanticComponent extends Component {
+class SemanticComponent extends React.Component {
 
   constructor(props) {
     super(props)
@@ -19,8 +21,12 @@ class SemanticComponent extends Component {
     })
   }
 
+  getType() {
+    return this.props.type
+  }
+
   fieldWidth() {
-    return numberName(this.props.width)
+    return numberName(this.props.width || 0)
   }
 
   title() {
@@ -30,7 +36,7 @@ class SemanticComponent extends Component {
       return result
 
     if(this.state.schema.displayName != null && !this.props.nolabel)
-      result = <label htmlFor={this.props.name}>{schema.displayName}</label>
+      result = <label htmlFor={this.props.name}>{this.state.schema.displayName}</label>
 
     return result
   }
@@ -89,20 +95,20 @@ class SemanticComponent extends Component {
   }
 
   elementClassName(before = '', after) {
-    after = after || this.props.type
+    after = after || this.getType()
     const leftButton  = this.props.leftButton ? 'left action' : ''
     const rightButton = this.props.rightButton ? 'right action' : ''
-    const leftIcon = this.props.rightButton ? 'left icon' : ''
-    const rightIcon = this.props.rightButton ? 'right icon' : ''
+    const leftIcon = this.props.leftIcon ? 'left icon' : ''
+    const rightIcon = this.props.rightIcon ? 'right icon' : ''
     const labelClass = this.props.label ? 'labeled' : ''
 
-    const result = `ui ${before} ${leftButton} ${rightButton} ${leftIcon} ${rightButton} ${labelClass} ${after}`
+    const result = `ui ${before} ${leftButton} ${rightButton} ${leftIcon} ${rightIcon} ${labelClass} ${after}`
 
     return result
   }
 
   errorMessage() {
-    result (<div className='validation-error'>{this.getErrorMessage()}</div>)
+    return (<div className='validation-error'>{this.getErrorMessage()}</div>)
   }
 
   beforeElement() {
@@ -150,6 +156,14 @@ class SemanticComponent extends Component {
       </div>
     )
   }
+}
+
+reactMixin.onClass(SemanticComponent, Mixin)
+
+function numberName(i) {
+  const numbers = ["", "one", "two", "three", "four", "five", "six",
+          "seven", "eight", "nine", "ten", "eleven", "twelve", "threeteen", "fourteen", "fiveteen", "sixteen"]
+  return numbers[i]
 }
 
 export default SemanticComponent
