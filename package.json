@@ -1,5 +1,5 @@
 {
-  "name": "formantify",
+  "name": "formantify-react",
   "version": "1.0.0",
   "description": "ReactJS Formsy Utilities with Semantic UI",
   "main": "src/index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lemol/formantify.git"
+    "url": "git+https://github.com/lemol/formantify-react.git"
   },
   "keywords": [
     "reactjs",
@@ -17,7 +17,7 @@
   "author": "Leza Morais Lutonda (Lemol-C)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/lemol/formantify/issues"
+    "url": "https://github.com/lemol/formantify-react/issues"
   },
-  "homepage": "https://github.com/lemol/formantify#readme"
+  "homepage": "https://github.com/lemol/formantify-react#readme"
 }
