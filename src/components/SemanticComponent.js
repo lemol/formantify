@@ -72,7 +72,7 @@ class SemanticComponent extends React.Component {
     if(options.icon)
         icon = <i className={`${options.icon} icon`}></i>
 
-    const text = options.text || options
+    const text = options.text || (typeof(options)==='string' ? options : '')
 
     result = (
       <button

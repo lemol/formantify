@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/lemol/formantify-react/issues"
   },
-  "homepage": "https://github.com/lemol/formantify-react#readme"
+  "homepage": "https://github.com/lemol/formantify-react#readme",
+  "dependencies": {
+    "hjs-webpack": "*"
+  }
 }
