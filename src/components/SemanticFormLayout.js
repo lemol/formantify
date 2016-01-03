@@ -1,6 +1,6 @@
 import React from 'react'
 
-class Field extends React.Component {
+export class Field extends React.Component {
 
     render() {
         var title = undefined
@@ -16,7 +16,7 @@ class Field extends React.Component {
     }
 }
 
-class Fields extends React.Component {
+export class Fields extends React.Component {
 
     getNumber() {
         return this.props.count || 0
@@ -40,15 +40,11 @@ class Fields extends React.Component {
     }
 }
 
-class TwoFields extends Fields {
+export class TwoFields extends Fields {
     getNumber() { return 2 }
 }
 
-class ThreeFields extends Fields {
+export class ThreeFields extends Fields {
     getNumber() { return 3 }
-}
-
-export default {
-  Fields: Fields, Field: Field, TwoFields: TwoFields, ThreeFields: ThreeFields
 }
 

@@ -1,7 +1,3 @@
-import SemanticForm from './components/SemanticForm'
-import SemanticInput from './components/SemanticInput'
-import SemanticLayout from './components/SemanticFormLayout'
-
-export const Form = SemanticForm
-export const Input = SemanticInput
-export const Layout = SemanticLayout
+export { default as Form } from './components/SemanticForm'
+export { default as Input } from './components/SemanticInput'
+export { Fields, TwoFields, ThreeFields, Field } from './components/SemanticFormLayout'

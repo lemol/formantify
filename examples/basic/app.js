@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
-import { Form, Input, Layout } from 'formantify-react'
+import { Form, Input, Field, Fields, TwoFields } from 'formantify-react'
 
 class Basic extends React.Component {
   constructor(props) {
@@ -29,12 +29,12 @@ class Basic extends React.Component {
 
     return (
       <Form schema={schema} model={model} onSubmit={this.submit.bind(this)}>
-        <Layout.Field title="Carros">
-          <Layout.TwoFields>
+        <Field title="Carros">
+          <TwoFields>
             <Input name="simple" rightButton={{icon: "home", className:"teal"}} leftIcon="download" />
             <Input name="complex" leftIcon="world" rightButton={{icon: "home"}} />
-          </Layout.TwoFields>
-        </Layout.Field>
+          </TwoFields>
+        </Field>
         <button type="submit">OK</button>
       </Form>
     )
