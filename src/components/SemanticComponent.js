@@ -13,6 +13,7 @@ class SemanticComponent extends React.Component {
 
   handleChangeValue(event) {
     this.setValue(event.currentTarget.value)
+    this.onChangeValue && this.onChangeValue(event.currentTarget.value)
   }
 
   setSchema(schema) {
@@ -94,15 +95,14 @@ class SemanticComponent extends React.Component {
     return className
   }
 
-  elementClassName(before = '', after) {
-    after = after || this.getType()
+  elementClassName(before = '', after = '') {
     const leftButton  = this.props.leftButton ? 'left action' : ''
     const rightButton = this.props.rightButton ? 'right action' : ''
     const leftIcon = this.props.leftIcon ? 'left icon' : ''
     const rightIcon = this.props.rightIcon ? 'right icon' : ''
     const labelClass = this.props.label ? 'labeled' : ''
 
-    const result = `ui ${before} ${leftButton} ${rightButton} ${leftIcon} ${rightIcon} ${labelClass} ${after}`
+    const result = `ui ${before} ${leftButton} ${rightButton} ${leftIcon} ${rightIcon} ${labelClass} ${after} ${this.getType()}`
 
     return result
   }
@@ -133,16 +133,22 @@ class SemanticComponent extends React.Component {
     return result
   }
 
-  render() {
+  getElement() {
+    return this.refs.element
+  }
 
+  elementProps() {
+    return {}
+  }
+
+  render() {
     if(this.state.schema == null)
       return (<div>Invalid Component</div>)
-
 
     return (
       <div className={this.fieldClassName()}>
         {this.title()}
-        <div className={this.elementClassName()}>
+        <div ref="element" {...this.elementProps} className={this.elementClassName()}>
           {this.label()}
           {this.icon('left')}
           {this.button('left')}

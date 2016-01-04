@@ -3,6 +3,7 @@ var path = require('path');
 
 var config = getConfig({
   // entry point for the app
+  isDev: true,
   in: './app.js',
 
   // Name or full path of output directory
@@ -16,7 +17,7 @@ var config = getConfig({
   // get a fresh folder. Usually you want this
   // but since it's destructive we make it
   // false by default
-  clearBeforeBuild: true
+  clearBeforeBuild: false
 })
 
 
