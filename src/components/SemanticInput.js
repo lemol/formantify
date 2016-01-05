@@ -9,7 +9,7 @@ import React from 'react'
 import SemanticComponent from './SemanticComponent'
 
 //@reactMixin.decorate(Mixin)
-class SemanticInput extends SemanticComponent {
+export default class SemanticInput extends SemanticComponent {
   constructor(props) {
     super(props)
   }
@@ -31,10 +31,5 @@ class SemanticInput extends SemanticComponent {
 
     return result
   }
-
-  render() {
-    return super.render()
-  }
 }
 
-export default SemanticInput

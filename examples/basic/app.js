@@ -5,6 +5,9 @@ import { Form, Input, Dropdown, Field, Fields, TwoFields } from 'formantify-reac
 class Basic extends React.Component {
   constructor(props) {
     super(props)
+    this.state = {
+      manyId: 2
+    }
   }
 
   submit(model) {
@@ -43,13 +46,35 @@ class Basic extends React.Component {
           ]
         }
 
+      },
+      various: {
+        displayName: 'Various',
+        listOptions: {
+          fields: {
+            value: 'value',
+            text: 'text'
+          },
+          url: '/various-{id}.json'
+        }
+      },
+      dia: {
+        displayName: 'Dia'
       }
     }
 
     let model = {
       simple: "lemol",
       complex: '',
-      many: 1
+      many: 2,
+      varius: undefined
+    }
+
+    var env = {id: this.state.manyId}
+
+    const setManyId = (id) => {
+      this.setState({
+        manyId: id
+      })
     }
 
     return (
@@ -60,7 +85,10 @@ class Basic extends React.Component {
             <Input name="complex" leftIcon="world" rightButton={{icon: "home"}} />
           </TwoFields>
         </Field>
-        <Dropdown name="many" />
+        <TwoFields>
+          <Dropdown name="many" bind={setManyId.bind(this)}/>
+          <Dropdown name="various" env={env} />
+        </TwoFields>
         <button type="submit">OK</button>
       </Form>
     )

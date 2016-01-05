@@ -40,6 +40,7 @@ class SemanticForm extends Form {
             component.setSchema(schema)
         }
         component.setValue(value)
+        component._componentWillMount && component._componentWillMount(schema)
 
         super.attachToForm(component)
     }

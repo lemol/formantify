@@ -17,34 +17,45 @@ import $transition from 'semantic-ui-transition'
 $.fn.dropdown = $dropdown
 $.fn.transition = $transition
 
-//@reactMixin.decorate(Mixin)
 export default class SemanticDropdown extends SemanticComponent {
 
     constructor(props) {
-        super(props)
-        this.state = {
-            listOptions: null,
-            list: [],
-            status: ''
-        }
+      super(props)
+      this.state = {
+        list: [],
+        status: ''
+      }
+    }
 
+    setSchema(schema) {
+      super.setSchema(schema)
+      if (schema.listOptions.list) {
+        this.setState({
+          list: schema.listOptions.list
+        })
+      }
+      if (schema.listOptions.url) {
+        this.loadList(this.props.env || {}, schema.listOptions)
+      }
     }
 
     componentWillUpdate(props) {
-        if(this.props.env !== props.env) {
-            this.setValue(undefined)
-            this.setState({list: []})
-            $(this.refs.dropdown).dropdown('clear')
-            this.loadList(props.env || {})
+      if(this.props.env !== props.env) {
+        if (this.state.schema.listOptions.url) {
+          this.changeValue(undefined)
+          this.setState({list: [], status: ''})
+          $(this.getElement()).dropdown('clear')
+          this.loadList(props.env || {}, this.state.schema.listOptions)
         }
+      }
     }
 
     componentDidUpdate() {
+      //$(this.getElement()).dropdown('refresh')
+      //$(this.getElement()).dropdown('clear')
+      //$(this.getElement()).dropdown('refresh')
+      //$(this.getElement()).dropdown('set selected', this.getValue())
       $(this.getElement()).dropdown('refresh')
-    }
-
-    onChangeValue(value) {
-      this.props.onChange && this.props.onChange(this.getValue())
     }
 
     evalExpr(env, expr) {
@@ -55,14 +66,13 @@ export default class SemanticDropdown extends SemanticComponent {
         return res
     }
 
-    loadList(env) {
+    loadList(env, listOptions) {
 
-        const listOptions = this.state.schema.listOptions || {}
+        //const listOptions = this.state.schema.listOptions || {}
 
         if (listOptions.url) {
 
             const url = this.evalExpr(env, listOptions.url)
-
             this.setState({
                 status: 'loading'
             })
@@ -71,38 +81,32 @@ export default class SemanticDropdown extends SemanticComponent {
                 url: url,
                 type: 'get',
                 dataType: 'json',
-                success: (res) => {
+                success: ((res) => {
 
                     this.setState({
                         list: res,
                         status: ''
                     })
 
-                    $(this.refs.dropdown).dropdown('set selected', this.getValue())
-                }
+                }).bind(this)
             })
         }
 
     }
 
+    //_componentWillMount(schema) {
+      //alert(JSON.stringify(this.state))
+      //if (schema.listOptions.url) {
+        //this.loadList(this.props.env || {}, schema.listOptions)
+      //}
+    //}
+
     componentDidMount() {
       const settings = {
-        onChange: (value, text) => {
-          this.setValue(value)
-          if(this.props.onChange)
-            this.props.onChange(value)
-        }
+        onChange: this.changeValue.bind(this)
       }
 
       $(this.getElement()).dropdown(settings)
-
-      if (this.state.schema.listOptions.list.length > 0) {
-        //$(this.getElement()).dropdown('set selected', this.getValue())
-        //$(this.refs.dropdown).dropdown('set selected', this.getValue())
-      }
-      else {
-        this.loadList(this.props.env || {})
-      }
     }
 
     getType() {
@@ -120,7 +124,7 @@ export default class SemanticDropdown extends SemanticComponent {
       fields.text = fields.text || 'text'
       fields.value = fields.value || 'value'
 
-      var items = this.state.schema.listOptions.list.map(x =>
+      var items = this.state.list.map(x =>
           <div key={x[fields.value]} className="item" data-value={x[fields.value]}>
             {this.props.icon?(<i className={`${x[fields.icon]} ${this.props.icon}`}></i>):undefined}
             {x[fields.text]}
@@ -133,11 +137,11 @@ export default class SemanticDropdown extends SemanticComponent {
       }
 
       return [
-        <input ref="value" name={this.props.name} value={this.getValue()} type="hidden" />,
-        <i className="dropdown icon"></i>,
+        <input key={0} ref="value" name={this.props.name} value={this.getValue()} type="hidden" />,
+        <i key={1} className="dropdown icon"></i>,
         search,
-        <div className="default text">{this.state.schema.placeholder}</div>,
-        <div tabIndex="-1" className="menu transition hidden">
+        <div key={2} className="default text">{this.state.schema.placeholder}</div>,
+        <div key={3} tabIndex="-1" className="menu transition hidden">
           {items}
         </div>
       ]
@@ -145,7 +149,6 @@ export default class SemanticDropdown extends SemanticComponent {
 
     elementProps() {
       return {
-        ref: 'dropdown',
         tabIndex: '0'
       }
     }
