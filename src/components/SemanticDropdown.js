@@ -101,6 +101,16 @@ export default class SemanticDropdown extends SemanticComponent {
       //}
     //}
 
+  changeValue(value) {
+    this.setValue(value)
+    this.onChangeValue(value)
+  }
+
+  onChangeValue(value) {
+    this.props.onChange && this.props.onChange(this.getValue())
+    this.props.bind && this.props.bind(value)
+  }
+
     componentDidMount() {
       const settings = {
         onChange: this.changeValue.bind(this)

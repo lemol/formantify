@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
-import { Form, Input, Dropdown, Field, Fields, TwoFields } from 'formantify-react'
+import { Form, Input, Dropdown, DatePicker, Field, Fields, TwoFields } from 'formantify-react'
 
 class Basic extends React.Component {
   constructor(props) {
@@ -66,7 +66,8 @@ class Basic extends React.Component {
       simple: "lemol",
       complex: '',
       many: 2,
-      varius: undefined
+      varius: 1,
+      dia: undefined
     }
 
     var env = {id: this.state.manyId}
@@ -89,6 +90,9 @@ class Basic extends React.Component {
           <Dropdown name="many" bind={setManyId.bind(this)}/>
           <Dropdown name="various" env={env} />
         </TwoFields>
+        <Fields>
+          <DatePicker name="dia" />
+        </Fields>
         <button type="submit">OK</button>
       </Form>
     )

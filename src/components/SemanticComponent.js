@@ -12,8 +12,17 @@ class SemanticComponent extends React.Component {
   }
 
   handleChangeValue(event) {
-    this.setValue(event.currentTarget.value)
-    this.onChangeValue && this.onChangeValue(event.currentTarget.value)
+    this.changeValue(event.currentTarget.value)
+  }
+
+  changeValue(value) {
+    this.setValue(value)
+    this.onChangeValue(value)
+  }
+
+  onChangeValue(value) {
+    this.props.onChange && this.props.onChange(this.getValue())
+    this.props.bind && this.props.bind(value)
   }
 
   setSchema(schema) {
