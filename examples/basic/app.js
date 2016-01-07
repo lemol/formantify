@@ -18,7 +18,7 @@ class Basic extends React.Component {
 
     let schema = {
       simple: {
-        displayName: "Simples"
+        displayName: 'Simples'
       },
       complex: {
         displayName: 'Complex'
@@ -63,14 +63,14 @@ class Basic extends React.Component {
     }
 
     let model = {
-      simple: "lemol",
+      simple: 'lemol',
       complex: '',
       many: 2,
-      varius: 1,
+      various: 1,
       dia: undefined
     }
 
-    var env = {id: this.state.manyId}
+    const env = { id: this.state.manyId }
 
     const setManyId = (id) => {
       this.setState({
@@ -82,8 +82,8 @@ class Basic extends React.Component {
       <Form schema={schema} model={model} onSubmit={this.submit.bind(this)}>
         <Field title="Carros">
           <TwoFields>
-            <Input name="simple" rightButton={{icon: "home", className:"teal"}} leftIcon="download" />
-            <Input name="complex" leftIcon="world" rightButton={{icon: "home"}} />
+            <Input name="simple" rightButton={{ icon: 'home', className:'teal' }} leftIcon="download" />
+            <Input name="complex" leftIcon="world" rightButton={{ icon: 'home' }} />
           </TwoFields>
         </Field>
         <TwoFields>

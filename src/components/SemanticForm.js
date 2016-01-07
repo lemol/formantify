@@ -37,7 +37,7 @@ class SemanticForm extends Form {
             if (schema.placeholder === undefined)
                 schema.placeholder = schema.displayName
 
-            component.setSchema(schema)
+            component.setSchema(schema, value)
         }
         component.setValue(value)
         component._componentWillMount && component._componentWillMount(schema)
