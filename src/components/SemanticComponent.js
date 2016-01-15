@@ -7,8 +7,28 @@ class SemanticComponent extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      schema: null
+      schema: null,
+      _modelValue: null,
+      _initialEnv: null
     }
+  }
+
+  setInitialEnv(env) {
+    //this.setState({
+      //_initialEnv: env
+    //})
+    //callback(env)
+  }
+
+  setModelValue(value) {
+    this.setState({
+      _modelValue: value
+    })
+    this.setValue(value)
+  }
+
+  getEnv() {
+    return []
   }
 
   handleChangeValue(event) {
@@ -131,11 +151,11 @@ class SemanticComponent extends React.Component {
   element() {
     const result = (
       <input
-        type='text'
+        type="text"
         name={this.props.name}
         onChange={this.changeValue.bind(this)}
         value={this.getValue()}
-        placeholder={this.state.schema.placeholder}
+        placeholder={(this.state.schema && this.state.schema.placeholder)||this.props.placeholder}
       />
     )
 
@@ -151,8 +171,8 @@ class SemanticComponent extends React.Component {
   }
 
   render() {
-    if(this.state.schema == null)
-      return (<div>Invalid Component</div>)
+    //if(this.state.schema == null)
+      //return (<div>Invalid Component</div>)
 
     return (
       <div className={this.fieldClassName()}>

@@ -10,6 +10,8 @@ import 'semantic-ui/dist/semantic.css'
 import React from 'react'
 import SemanticComponent from './SemanticComponent'
 
+import { evalExpr, getEnv, updateEnv } from '../utils/Expressions.js'
+
 import $ from 'jquery'
 import $dropdown from 'semantic-ui-dropdown'
 import $transition from 'semantic-ui-transition'
@@ -23,71 +25,93 @@ export default class SemanticDropdown extends SemanticComponent {
     super(props)
     this.state = {
       list: [],
-      status: ''
+      status: ' ',
+      env: {}
     }
   }
 
-  setSchema(schema, value) {
+  setSchema(schema) {
     super.setSchema(schema)
+  }
+
+  setInitialEnv(env) {
+    const schema = this.state.schema
     if (schema.listOptions.list) {
       this.setState({
-        list: schema.listOptions.list
+        status: '',
+        list: schema.listOptions.list,
+        env: env
       })
     }
     if (schema.listOptions.url) {
-      this.loadList(this.props.env || {}, schema.listOptions, value)
+      this.loadList(env, schema.listOptions)
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    const envChanged = nextProps.env !== this.props.env
-    const listOptions = this.state.schema.listOptions
+  getEnv(schema) {
+    const url = schema.listOptions.url
 
-    if(envChanged) {
-      if (listOptions.url) {
-        this.changeValue(undefined)
-        this.loadList(nextProps.env || {}, listOptions)
-      }
-    }
+    if (url == undefined)
+      return super.getEnv()
+
+    return getEnv(url)
   }
 
-  shouldComponentUpdate (nextProps, nextState) {
-    const listChanged = nextState.list !== this.state.list
-    const envChanged = nextProps.env !== this.props.env
-    return listChanged || envChanged
+  updateVar(varName, value) {
+    const env = updateEnv(this.state.env, varName, value)
+
+    //console.log(`Updating '${varName}' in '${this.props.name}' to '${value}'`)
+
+    if (value === undefined || value === '') {
+      this.setState({
+        env: env,
+        list: []
+      })
+    }
+    else {
+      this.setState({
+        env: env,
+        list: [],
+        status: 'loading'
+      })
+      this.loadList(env, this.state.schema.listOptions)
+    }
+
+    this.setValue('')
+
   }
 
-  componentWillUpdate (nextProps, nextState) {
-    const listChanged = nextState.list !== this.state.list
-    if (listChanged) {
-      $(this.getElement()).dropdown('clear')
-    }
+  shouldComponentUpdate(nextProps, nextState) {
+    const res = (nextState.status !== this.state.status) || (nextState.list.length === 0)
+    return res
+  }
+
+  componentWillUpdate(/*nextProps , nextState*/) {
+    $(this.getElement()).dropdown('clear')
   }
 
   componentDidUpdate() {
-    const value = this.getValue()
-    if(value != undefined) {
+    let value = this.getValue()
+    $(this.getElement()).dropdown('refresh')
+
+    if(this.state.list.length !== 0) {
+      value = value == undefined ? '' : value
+      $(this.getElement()).dropdown('set selected', value.toString())
       $(this.getElement()).dropdown('refresh')
-      $(this.getElement()).dropdown('set selected', value)
     }
   }
 
-  evalExpr(env, expr) {
-      var res = expr
-      for(var name in env) {
-          res = res.replace('{' + name + '}', env[name])
-      }
-      return res
-  }
-
-  loadList(env, listOptions, value) {
-
+  loadList(env, listOptions) {
     if (listOptions.url) {
-      const url = this.evalExpr(env, listOptions.url)
+      const url = evalExpr(env, listOptions.url)
+
+      if(url === undefined) {
+        return
+      }
 
       this.setState({
-        list: [],
-        status: 'loading'
+        status: 'loading',
+        env: env
       })
 
       $.ajax({
@@ -96,16 +120,20 @@ export default class SemanticDropdown extends SemanticComponent {
         dataType: 'json',
         success: ((res) => {
           this.setState({
-              list: res,
-              status: ''
+            list: res,
+            status: ''
           })
         }).bind(this)
       })
     }
-
   }
 
   changeValue(value) {
+    if(value==='')
+      return
+
+    //console.log(`Setting '${value}' for '${this.props.name}'`)
+
     this.setValue(value)
     this.onChangeValue(value)
   }
@@ -139,16 +167,16 @@ export default class SemanticDropdown extends SemanticComponent {
     fields.text = fields.text || 'text'
     fields.value = fields.value || 'value'
 
-    var items = this.state.list.map(x =>
-        <div key={x[fields.value]} className="item" data-value={x[fields.value]}>
-          {this.props.icon?(<i className={`${x[fields.icon]} ${this.props.icon}`}></i>):undefined}
-          {x[fields.text]}
-        </div>
+    const items = this.state.list.map(x =>
+      <div key={x[fields.value]} className="item" data-value={x[fields.value]}>
+        {this.props.icon?(<i className={`${x[fields.icon]} ${this.props.icon}`}></i>):undefined}
+        {x[fields.text]}
+      </div>
     )
 
-    var search = undefined
+    let search = undefined
     if (this.props.search) {
-        search = <input tabIndex="0" className="search" type="text" />
+      search = <input tabIndex="0" className="search" type="text" />
     }
 
     return [

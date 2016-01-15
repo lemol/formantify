@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
-import { Form, Input, Dropdown, DatePicker, Field, Fields, TwoFields } from 'formantify-react'
+import { Form, Input, Dropdown, DatePicker, Field, Fields, TwoFields, ThreeFields } from 'formantify-react'
 
 class Basic extends React.Component {
   constructor(props) {
@@ -54,7 +54,17 @@ class Basic extends React.Component {
             value: 'value',
             text: 'text'
           },
-          url: '/various-{id}.json'
+          url: '/various-{many}.json'
+        }
+      },
+      others: {
+        displayName: 'Others',
+        listOptions: {
+          fields: {
+            value: 'value',
+            text: 'text'
+          },
+          url: '/various-{various}.json'
         }
       },
       dia: {
@@ -67,15 +77,8 @@ class Basic extends React.Component {
       complex: '',
       many: 2,
       various: 1,
+      others: 3,
       dia: undefined
-    }
-
-    const env = { id: this.state.manyId }
-
-    const setManyId = (id) => {
-      this.setState({
-        manyId: id
-      })
     }
 
     return (
@@ -86,10 +89,11 @@ class Basic extends React.Component {
             <Input name="complex" leftIcon="world" rightButton={{ icon: 'home' }} />
           </TwoFields>
         </Field>
-        <TwoFields>
-          <Dropdown name="many" bind={setManyId.bind(this)}/>
-          <Dropdown name="various" env={env} />
-        </TwoFields>
+        <ThreeFields>
+          <Dropdown name="many" />
+          <Dropdown name="various" />
+          <Dropdown name="others" />
+        </ThreeFields>
         <Fields>
           <DatePicker name="dia" />
         </Fields>
