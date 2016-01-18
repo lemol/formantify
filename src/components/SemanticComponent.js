@@ -4,69 +4,24 @@ import { Componenty, Mixin } from 'formsy-react'
 //import { ListMixin } from './SemanticList'
 //
 
-//const ListMixin = {
-  //contextTypes: {
-    ////formList: React.PropTypes.object,
-    //listItem: React.PropTypes.object
-  //},
-
-  //componentWillMount: function() {
-
-    //if(this.context.listItem) {
-      //this.getName = () => {
-        //alert('getting name')
-
-        //const index = 0
-        //const collectionName = 'lemol'
-        //const name = `${collectionName}[${index}].${item.props.name}`
-        //return name
-      //}
-    //}
-
-    ////alert('Mounting')
-    ////alert(JSON.stringify(this.context))
-    ////if(this.context.listItem) {
-      ////alert('Formlist: ' + this.props.name)
-      ////this.context.formList.addItem(0,this)
-    ////}
-  //}
-//}
-
-const ItemComponent = ListItem => class extends React.Component {
-  constructor(props) {
-    super(props)
-  }
-
-  componentWillMount() {
-
-  }
-
-  render() {
-    return <ListItem {...this.props} {...this.state} />
-  }
-}
-
 export default class SemanticComponent extends React.Component {
 
+  static contextTypes = {
+    formsied: React.PropTypes.object
+  }
+
   constructor(props) {
     super(props)
-    alert('S>>'+props.name)
     this.state = {
-      ...props._state,
-      schema: null,
-      _modelValue: null,
-      _initialEnv: null
+      schema: null
     }
   }
 
-  setInitialEnv() {
+  componentWillMount() {
+    this.context.formsied.setup(this)
   }
 
-  setModelValue(value) {
-    this.setState({
-      _modelValue: value
-    })
-    this.setValue(value)
+  setInitialEnv() {
   }
 
   getEnv() {
@@ -82,7 +37,12 @@ export default class SemanticComponent extends React.Component {
     this.onChangeValue(value)
   }
 
+  changing(value) {
+    this.context.formsied.changing(this, value)
+  }
+
   onChangeValue(value) {
+    this.changing(value)
     this.props.onChange && this.props.onChange(this.props.getValue())
     this.props.bind && this.props.bind(value)
   }
@@ -183,7 +143,7 @@ export default class SemanticComponent extends React.Component {
   }
 
   errorMessage() {
-    return (<div className='validation-error'>this.getErrorMessage()</div>)
+    return (<div className='validation-error'></div>)
     //return (<div className='validation-error'>{this.getErrorMessage()}</div>)
   }
 
@@ -213,6 +173,18 @@ export default class SemanticComponent extends React.Component {
     return this.refs.element
   }
 
+  setValue(value) {
+    return this.props.setValue(value)
+  }
+
+  getValue(value) {
+    return this.props.getValue()
+  }
+
+  setPristine(value) {
+    this.props.setPristine(value)
+  }
+
   elementProps() {
     return {}
   }
@@ -240,10 +212,8 @@ export default class SemanticComponent extends React.Component {
   }
 }
 
-//reactMixin.onClass(SC, Mixin)
-//reactMixin.onClass(SemanticComponent, ListMixin)
-
-export default Componenty(SemanticComponent)
+export default SemanticComponent
+//export default Componenty(SemanticComponent)
 
 function numberName(i) {
   const numbers = ["", "one", "two", "three", "four", "five", "six",

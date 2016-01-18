@@ -9,6 +9,7 @@ import 'semantic-ui/dist/semantic.css'
 
 import React from 'react'
 import SemanticComponent from './SemanticComponent'
+import { Componenty } from 'formsy-react'
 
 import { evalExpr, getEnv, updateEnv } from '../utils/Expressions.js'
 
@@ -19,7 +20,7 @@ import $transition from 'semantic-ui-transition'
 $.fn.dropdown = $dropdown
 $.fn.transition = $transition
 
-export default class SemanticDropdown extends SemanticComponent {
+class SemanticDropdown extends SemanticComponent {
 
   constructor(props) {
     super(props)
@@ -60,7 +61,7 @@ export default class SemanticDropdown extends SemanticComponent {
   updateVar(varName, value) {
     const env = updateEnv(this.state.env, varName, value)
 
-    //console.log(`Updating '${varName}' in '${this.props.name}' to '${value}'`)
+    console.log(`Updating '${varName}' in '${this.props.name}' to '${value}'`)
 
     if (value === undefined || value === '') {
       this.setState({
@@ -77,7 +78,8 @@ export default class SemanticDropdown extends SemanticComponent {
       this.loadList(env, this.state.schema.listOptions)
     }
 
-    this.setValue('')
+    //this.setValue('')
+    this.changeValue('')
 
   }
 
@@ -128,24 +130,23 @@ export default class SemanticDropdown extends SemanticComponent {
     }
   }
 
-  changeValue(value) {
-    if(value==='')
+  changeValue(value, isEvent) {
+    if(isEvent && value==='')
       return
 
-    //console.log(`Setting '${value}' for '${this.props.name}'`)
+    console.log(`Setting '${value}' for '${this.props.name}'`)
 
     this.setValue(value)
     this.onChangeValue(value)
   }
 
-  onChangeValue(value) {
-    this.props.onChange && this.props.onChange(this.getValue())
-    this.props.bind && this.props.bind(value)
-  }
-
   componentDidMount() {
+    const onChange = (value) => {
+      this.changeValue(value, true)
+    }
+
     const settings = {
-      onChange: this.changeValue.bind(this),
+      onChange: onChange,
       placeholder: this.state.schema.placeholder
     }
 
@@ -198,3 +199,4 @@ export default class SemanticDropdown extends SemanticComponent {
 
 }
 
+export default Componenty(SemanticDropdown)

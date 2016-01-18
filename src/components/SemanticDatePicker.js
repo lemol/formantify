@@ -3,6 +3,8 @@ import 'semantic-ui-daterangepicker/daterangepicker.css'
 
 import React from 'react'
 import SemanticInput from './SemanticInput'
+import SemanticComponent from './SemanticComponent'
+import { Componenty } from 'formsy-react'
 
 import $ from 'jquery'
 import moment from 'moment'
@@ -10,7 +12,7 @@ import $factory from 'semantic-ui-daterangepicker'
 
 $factory(this, {}, moment, $)
 
-export default class SemanticDatePicker extends SemanticInput {
+class SemanticDatePicker extends SemanticComponent {
 
   static defaultProps = {
     ...SemanticInput.defaultProps,
@@ -36,6 +38,10 @@ export default class SemanticDatePicker extends SemanticInput {
       .on('apply.daterangepicker', this.handleChangeValue.bind(this))
   }
 
+  getType() {
+    return 'input'
+  }
+
   element() {
     const value = this.getValue() == undefined
       ? ''
@@ -56,3 +62,4 @@ export default class SemanticDatePicker extends SemanticInput {
   }
 }
 
+export default Componenty(SemanticDatePicker)

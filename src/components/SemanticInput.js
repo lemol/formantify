@@ -7,6 +7,7 @@ import 'semantic-ui/dist/components/form.css'
 
 import React from 'react'
 import SemanticComponent from './SemanticComponent'
+import { Componenty } from 'formsy-react'
 
 //@reactMixin.decorate(Mixin)
 export default class SemanticInput extends SemanticComponent {
@@ -33,3 +34,4 @@ export default class SemanticInput extends SemanticComponent {
   }
 }
 
+export default Componenty(SemanticInput)
