@@ -1,6 +1,6 @@
 import getConfig from 'hjs-webpack'
 
-export default getConfig({
+var config = getConfig({
   // entry point for the app
   in: 'src/app.js',
 
@@ -17,3 +17,17 @@ export default getConfig({
   // false by default
   clearBeforeBuild: true
 })
+
+var src6 = path.join(__dirname, '..', '..', '..', 'formsy-react-es6', 'src')
+var fs = require('fs')
+if (fs.existsSync(src)) {
+  // Use the latest src
+  config.resolve = { alias: { 'formsy-react': src6 } }
+  config.module.loaders.push({
+    test: /\.js$/,
+    loaders: ['babel?presets[]=react,presets[]=es2015,presets[]=stage-0,plugins[]=transform-decorators,plugins[]=syntax-decorators'],
+    include: src
+  });
+}
+
+export default config

@@ -43,10 +43,12 @@ var config = getConfig({
 // latest src instead of using it from npm. Remove this if running
 // outside of the source.
 var src = path.join(__dirname, '..', '..', 'src')
+var src6 = path.join(__dirname, '..', '..', '..', 'formsy-react-es6', 'src')
+
 var fs = require('fs')
 if (fs.existsSync(src)) {
   // Use the latest src
-  config.resolve = { alias: { 'formantify-react': src } }
+  config.resolve = { alias: { 'formantify-react': src, 'formsy-react': src6 } }
   config.module.loaders.push({
     test: /\.js$/,
     loaders: ['babel?presets[]=react,presets[]=es2015,presets[]=stage-0,plugins[]=transform-decorators,plugins[]=syntax-decorators'],

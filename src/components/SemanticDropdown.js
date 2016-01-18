@@ -35,7 +35,7 @@ export default class SemanticDropdown extends SemanticComponent {
   }
 
   setInitialEnv(env) {
-    const schema = this.state.schema
+    const schema = this.state.schema || {listOptions: {}}
     if (schema.listOptions.list) {
       this.setState({
         status: '',
