@@ -1,77 +1,122 @@
 import React from 'react'
 import reactMixin from 'react-mixin'
-import { Mixin } from 'formsy-react'
-//import { Form } from 'formsy-react'
+import { Componenty } from 'formsy-react'
 import Component from './SemanticComponent'
 
-import { getValueFor } from '../utils/Expressions.js'
+import { getValueFor, setValueFor } from '../utils/Expressions.js'
 
 import _ from 'underscore'
 
-export class List extends Component {
+class List1 extends Component {
+
+  static displayName = 'List'
+
+  static context = {
+    formsied: React.PropTypes.object
+  }
 
   constructor(props) {
     super(props)
-    this.canUpdate = false
-    this.listeners = {}
   }
-
-  //componentWillMount() {
-    //const elms = this.props.children.props.children
-    //for(const i in elms) {
-
-    //}
-  //}
-  getChildContext() {
-    return {
-      formList: {
-        addItem: ::this.addItem
-      }
-    }
-  }
-
-  addItem(index, item) {
-    alert(item.props.name)
-
-    if(item.props.name) {
-      const name = `${this.props.name}[${index}].${item.props.name}`
-      alert('Adding: ' + name)
-      this.context.formsy.attachToForm(item, name)
-    }
-  }
-
-  //setSchema(schema, value) {
-    ////alert(schema.displayName)
-    ////alert(value)
-  //}
 
   render() {
-    //alert(JSON.stringify(this.props.children[0]))
-    //var c = this.props.children.props.children
-    //alert(c)
+    const value = this.getValue()
 
-    const res = []
+    if(value==undefined)
+      return <div/>
 
-    //this.getValue().map()
-    for(var i in (this.getValue && this.getValue())||[]) {
+    //alert(value.length)
+
+    const res = value.map((c, i) => {
       const cl = this.props.children.props.children
-      const inst = _.extend(cl)
-      res.push(inst)
-      //alert(JSON.stringify(inst[0].props.idd))
-    }
+      const clItem = this.props.children
+
+      //const item = _.clone(clItem)
+      const item = React.createElement(clItem.type, {
+        index: i,
+        key: i,
+        name: this.props.name,
+        formsied: this.context.formsied,
+        changeValue: ::this.changeValue,
+        getValue: ::this.getValue
+      }, cl)
+
+      return item
+    })
 
     return <div>{res}</div>
   }
 }
 
-List.
-  childContextTypes = {
+export const List = Componenty(List1)
+
+export class Item extends React.Component {
+
+  static childContextTypes = {
     formList: React.PropTypes.object
   }
 
-export class Item extends React.Component {
   constructor(props) {
     super(props)
+    this.canUpdate = false
+    this.items = []
+  }
+
+  componentDidMount() {
+
+    for(const i in this.items) {
+      this.items[i].setInitialEnv(this.props.formsied.model)
+    }
+
+    this.canUpdate = true
+  }
+
+  getChildContext() {
+    return {
+      formList: {
+        getName: ::this.getName,
+        setup: ::this.setup,
+        changing: ::this.changing
+      }
+    }
+  }
+
+  setup(component) {
+    this.items.push(component)
+    this.props.formsied.setup(component)
+  }
+
+  changing(component, value) {
+    if(!this.canUpdate)
+      return
+
+    const listValue = this.getValue()
+    const newList = {}
+    newList[this.props.name] = listValue
+
+    const varname = component.getName()
+
+    setValueFor(newList, varname, value)
+    this.props.changeValue(newList[this.props.name])
+
+    this.props.formsied.changing(component, value)
+  }
+
+  getValue() {
+    return this.props.getValue()
+  }
+
+  setValue(value) {
+    return this.props.setValue(value)
+  }
+
+  getName(component) {
+    const name = `${this.props.name}[${this.props.index}].${component.props.name}`
+    return name
+  }
+
+  render() {
+    return <div>{this.props.children}</div>
   }
 }
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Form } from 'formsy-react'
 
-import { getValueFor } from '../utils/Expressions.js'
+import { getValueFor, getSchemaFor } from '../utils/Expressions.js'
 
 const Formsyie = Formsyied => class extends React.Component {
 
@@ -20,7 +20,9 @@ const Formsyie = Formsyied => class extends React.Component {
     return {
       formsied: {
         setup: ::this.setup,
-        changing: ::this.changing
+        changing: ::this.changing,
+        bindFor: ::this.bindFor,
+        model: this.props.model
       }
     }
   }
@@ -52,13 +54,16 @@ const Formsyie = Formsyied => class extends React.Component {
     if(!this.canUpdate)
       return
 
-    const varname = component.props.name
+    const varname = component.getName()
+    console.log(`Changing '${varname}' to '${value}'`)
     this.bindFor(varname, value)
   }
 
   saveEnv(component, env) {
+    console.log(`Saving enviroment for '${component.getName()}' -> ${JSON.stringify(env)}`)
+
     for(const i in env) {
-      const varName = env[i]
+      const varName = component.getNameBase() + env[i]
       this.listeners[varName] = this.listeners[varName] || []
       this.listeners[varName].push(component)
     }
@@ -73,11 +78,11 @@ const Formsyie = Formsyied => class extends React.Component {
 
   setup(component) {
 
-    const name = component.props.name
-    //alert(name)
-    //alert(JSON.stringify(this.props.schema))
-    const schema = this.props.schema[name] || {listOptions: {}}
+    const name = component.getName()
+    const schema = getSchemaFor(this.props.schema, name)  //|| {listOptions: {}}
     const value = component.props.initialValue || getValueFor(this.props.model, name)
+
+    console.log(`setup: ${name} -> ${JSON.stringify(schema)}`)
 
     //alert(name)
     if (schema) {

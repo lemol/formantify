@@ -7,7 +7,8 @@ import { Componenty, Mixin } from 'formsy-react'
 export default class SemanticComponent extends React.Component {
 
   static contextTypes = {
-    formsied: React.PropTypes.object
+    formsied: React.PropTypes.object,
+    formList: React.PropTypes.object
   }
 
   constructor(props) {
@@ -18,7 +19,13 @@ export default class SemanticComponent extends React.Component {
   }
 
   componentWillMount() {
-    this.context.formsied.setup(this)
+    if (this.context.formList) {
+      return this.context.formList.setup(this)
+    }
+
+    if (this.context.formsied) {
+      this.context.formsied.setup(this)
+    }
   }
 
   setInitialEnv() {
@@ -32,17 +39,22 @@ export default class SemanticComponent extends React.Component {
     this.changeValue(event.currentTarget.value)
   }
 
-  changeValue(value) {
+  changeValue(value, silent = false) {
     this.setValue(value)
-    this.onChangeValue(value)
+    this.onChangeValue(value, silent)
   }
 
   changing(value) {
+    if(this.context.formList) {
+      return this.context.formList.changing(this, value)
+    }
     this.context.formsied.changing(this, value)
   }
 
-  onChangeValue(value) {
-    this.changing(value)
+  onChangeValue(value, silent = false) {
+    if (!silent)
+      this.changing(value)
+
     this.props.onChange && this.props.onChange(this.props.getValue())
     this.props.bind && this.props.bind(value)
   }
@@ -58,7 +70,23 @@ export default class SemanticComponent extends React.Component {
   }
 
   getName() {
-    return (this.getName1 && this.getName1()) || this.props.name
+    if(this.context.formList) {
+      return this.context.formList.getName(this)
+    }
+
+    return this.props.name
+  }
+
+  getNameBase() {
+    const spl = this.getName().split('.')
+    let namebase = ''
+
+    for(var i=0; i<spl.length-1; i++) {
+      namebase += spl[i]
+    }
+
+    namebase = namebase && (namebase + '.')
+    return namebase
   }
 
   fieldWidth() {

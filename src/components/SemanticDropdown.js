@@ -59,9 +59,10 @@ class SemanticDropdown extends SemanticComponent {
   }
 
   updateVar(varName, value) {
+    console.log(`Before updating ${varName} -> ${JSON.stringify(this.state)}`)
     const env = updateEnv(this.state.env, varName, value)
 
-    console.log(`Updating '${varName}' in '${this.props.name}' to '${value}'`)
+    console.log(`Updating '${varName}' in '${this.getName()}' to '${value}'`)
 
     if (value === undefined || value === '') {
       this.setState({
@@ -105,7 +106,11 @@ class SemanticDropdown extends SemanticComponent {
 
   loadList(env, listOptions) {
     if (listOptions.url) {
-      const url = evalExpr(env, listOptions.url)
+
+      console.log(`setting initial env for: ${this.getName()} -> url: ${listOptions.url} ${JSON.stringify(env)}`)
+      const base = this.getNameBase()
+      const url = evalExpr(env, listOptions.url, base)
+      console.log(`url evaled ${url}`)
 
       if(url === undefined) {
         return
@@ -134,7 +139,7 @@ class SemanticDropdown extends SemanticComponent {
     if(isEvent && value==='')
       return
 
-    console.log(`Setting '${value}' for '${this.props.name}'`)
+    console.log(`Setting '${value}' for '${this.getName()}'`)
 
     this.setValue(value)
     this.onChangeValue(value)
@@ -181,7 +186,7 @@ class SemanticDropdown extends SemanticComponent {
     }
 
     return [
-      <input key={0} ref="value" name={this.props.name} value={this.getValue()} type="hidden" />,
+      <input key={0} ref="value" name={this.getName()} value={this.getValue()} type="hidden" />,
       <i key={1} className="dropdown icon"></i>,
       search,
       <div key={2} className="default text">{this.state.schema.placeholder}</div>,

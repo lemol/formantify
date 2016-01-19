@@ -73,6 +73,9 @@ class Basic extends React.Component {
       options: {
         displayName: 'Options',
         items: {
+          name: {
+            displayName: 'Name'
+          },
           university: {
             displayName: 'University',
             listOptions: {
@@ -119,13 +122,15 @@ class Basic extends React.Component {
         <Fields>
           <DatePicker name="dia" />
         </Fields>
-        {/*<List name="options">
+        <List name="options">
           <Item>
-            <Input name="name" />
-            <Dropdown name="university" />
-            <Dropdown name="course" />
+            <ThreeFields>
+              <Input name="name" />
+              <Dropdown name="university" />
+              <Dropdown name="course" />
+            </ThreeFields>
           </Item>
-          </List>*/}
+        </List>
         <button type="submit">OK</button>
       </Form>
     )

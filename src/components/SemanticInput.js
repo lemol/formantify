@@ -23,7 +23,7 @@ export default class SemanticInput extends SemanticComponent {
     const result = (
       <input
         type="text"
-        name={this.props.name}
+        name={this.getName()}
         onChange={this.handleChangeValue.bind(this)}
         value={this.getValue()}
         placeholder={(this.state.schema && this.state.schema.placeholder)||this.props.placeholder}

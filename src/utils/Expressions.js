@@ -3,22 +3,91 @@ export function getValueFor(model, str) {
   if(!model)
     return undefined
 
-  const splDot = str.split('.')
-  if(splDot.length>1) {
-    return model[splDot[0]][splDot[1]]
+  const rname = /^([a-zA-Z0-9]+?)$/
+  const rprop = /^([a-zA-Z0-9]+?)\.([a-zA-Z0-9]+?)$/
+  const rpropArr = /^([a-zA-Z0-9]+?)\.([a-zA-Z0-9]+?)\[([0-9]*?)\]$/
+  const rarrName  = /^([a-zA-Z0-9]+?)\[([0-9]*?)\]$/
+  const rarrProp  = /^([a-zA-Z0-9]+?)\[([0-9]*?)\]\.([a-zA-Z0-9]+?)$/
+
+  let result = undefined
+
+  let match = rname.exec(str)
+  if (match != null) {
+    result = model[match[1]]
+    return result
   }
 
-  const spl = str.split('[')
-  if (spl.length==1) {
-    return model[str]
+  match = rprop.exec(str)
+  if (match != null) {
+    result = model[match[1]][match[2]]
+    return result
   }
-  else {
-    const ix = spl[1].split(']')[0]
-    return model[spl[0]][ix]
+
+  match = rpropArr.exec(str)
+  if (match != null) {
+    result = model[match[1]][match[2]][match[3]]
+    return result
   }
+
+  match = rarrName.exec(str)
+  if (match != null) {
+    result = model[match[1]][match[2]]
+    return result
+  }
+
+  match = rarrProp.exec(str)
+  if (match != null) {
+    result = model[match[1]][match[2]][match[3]]
+    return result
+  }
+
+  throw Error('Parse error')
 }
 
-export function evalExpr(env, expr) {
+export function setValueFor(model, str, value) {
+  if(!model)
+    return undefined
+
+  const rname = /^([a-zA-Z0-9]+?)$/
+  const rprop = /^([a-zA-Z0-9]+?)\.([a-zA-Z0-9]+?)$/
+  const rpropArr = /^([a-zA-Z0-9]+?)\.([a-zA-Z0-9]+?)\[([0-9]*?)\]$/
+  const rarrName  = /^([a-zA-Z0-9]+?)\[([0-9]*?)\]$/
+  const rarrProp  = /^([a-zA-Z0-9]+?)\[([0-9]*?)\]\.([a-zA-Z0-9]+?)$/
+
+  let match = rname.exec(str)
+  if (match != null) {
+    model[match[1]] = value
+    return
+  }
+
+  match = rprop.exec(str)
+  if (match != null) {
+    model[match[1]][match[2]] = value
+    return
+  }
+
+  match = rpropArr.exec(str)
+  if (match != null) {
+    model[match[1]][match[2]][match[3]] = value
+    return
+  }
+
+  match = rarrName.exec(str)
+  if (match != null) {
+    model[match[1]][match[2]] = value
+    return
+  }
+
+  match = rarrProp.exec(str)
+  if (match != null) {
+    model[match[1]][match[2]][match[3]] = value
+    return
+  }
+
+  throw Error('Parse error')
+}
+
+export function evalExpr(env, expr, base = '') {
   if (expr.indexOf('{')===-1)
     return expr
 
@@ -29,8 +98,8 @@ export function evalExpr(env, expr) {
   for(const i in envs) {
     const name = envs[i]
     const key = `{${name}}`
-    const value = getValueFor(env, name)
-
+    const fullname = base + name
+    const value = getValueFor(env, fullname)
 
     if (value===undefined || value=='') {
       return undefined
@@ -60,20 +129,51 @@ export function updateEnv(env, varname, value) {
   if(!env)
     return undefined
 
-  const splDot = varname.split('.')
-  if(splDot.length>1) {
-    env[splDot[0]][splDot[1]] = value
-    return env
+  setValueFor(env, varname, value)
+  return env
+}
+
+export function getSchemaFor(model, str) {
+  if(!model)
+    return undefined
+
+  const rname = /^([a-zA-Z0-9]+?)$/
+  const rprop = /^([a-zA-Z0-9]+?)\.([a-zA-Z0-9]+?)$/
+  const rpropArr = /^([a-zA-Z0-9]+?)\.([a-zA-Z0-9]+?)\[([0-9]*?)\]$/
+  const rarrName  = /^([a-zA-Z0-9]+?)\[([0-9]*?)\]$/
+  const rarrProp  = /^([a-zA-Z0-9]+?)\[([0-9]*?)\]\.([a-zA-Z0-9]+?)$/
+
+  let result = undefined
+
+  let match = rname.exec(str)
+  if (match != null) {
+    result = model[match[1]]
+    return result
   }
 
-  const spl = varname.split('[')
-  if (spl.length==1) {
-    env[varname] = value
-    return env
+  match = rprop.exec(str)
+  if (match != null) {
+    result = model[match[1]][match[2]]
+    return result
   }
-  else {
-    const ix = spl[1].split(']')[0]
-    env[spl[0]][ix] = value
-    return env
+
+  match = rpropArr.exec(str)
+  if (match != null) {
+    result = model[match[1]][match[2]]['items']
+    return result
   }
+
+  match = rarrName.exec(str)
+  if (match != null) {
+    result = model[match[1]]['items']
+    return result
+  }
+
+  match = rarrProp.exec(str)
+  if (match != null) {
+    result = model[match[1]]['items'][match[3]]
+    return result
+  }
+
+  throw Error('Parse error')
 }
