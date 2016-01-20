@@ -16,6 +16,7 @@ export default class SemanticComponent extends React.Component {
     this.state = {
       schema: null
     }
+    this.envInitialized = false
   }
 
   componentWillMount() {
@@ -28,7 +29,9 @@ export default class SemanticComponent extends React.Component {
     }
   }
 
-  setInitialEnv() {
+  setInitialEnv(env) {
+    console.log(`setting initial env for: ${this.getName()} -> ${JSON.stringify(env)}`)
+    this.envInitialized = true
   }
 
   getEnv() {
@@ -85,7 +88,7 @@ export default class SemanticComponent extends React.Component {
       namebase += spl[i]
     }
 
-    namebase = namebase && (namebase + '.')
+    namebase = namebase && (namebase + (this.props.name && '.'))
     return namebase
   }
 

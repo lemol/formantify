@@ -13,6 +13,7 @@ import { Componenty } from 'formsy-react'
 
 import { evalExpr, getEnv, updateEnv } from '../utils/Expressions.js'
 
+import _ from 'underscore'
 import $ from 'jquery'
 import $dropdown from 'semantic-ui-dropdown'
 import $transition from 'semantic-ui-transition'
@@ -36,6 +37,7 @@ class SemanticDropdown extends SemanticComponent {
   }
 
   setInitialEnv(env) {
+    env = _.clone(env)
     const schema = this.state.schema || {listOptions: {}}
     if (schema.listOptions.list) {
       this.setState({
@@ -47,6 +49,8 @@ class SemanticDropdown extends SemanticComponent {
     if (schema.listOptions.url) {
       this.loadList(env, schema.listOptions)
     }
+
+    super.setInitialEnv(env)
   }
 
   getEnv(schema) {
@@ -59,7 +63,7 @@ class SemanticDropdown extends SemanticComponent {
   }
 
   updateVar(varName, value) {
-    console.log(`Before updating ${varName} -> ${JSON.stringify(this.state)}`)
+    console.log(`Before updating ${varName} in ${this.props.name} -> ${JSON.stringify(this.state)}`)
     const env = updateEnv(this.state.env, varName, value)
 
     console.log(`Updating '${varName}' in '${this.getName()}' to '${value}'`)
@@ -106,20 +110,21 @@ class SemanticDropdown extends SemanticComponent {
 
   loadList(env, listOptions) {
     if (listOptions.url) {
-
-      console.log(`setting initial env for: ${this.getName()} -> url: ${listOptions.url} ${JSON.stringify(env)}`)
       const base = this.getNameBase()
       const url = evalExpr(env, listOptions.url, base)
-      console.log(`url evaled ${url}`)
-
-      if(url === undefined) {
-        return
-      }
+      console.log(`url evaluated to: ${url}`)
 
       this.setState({
         status: 'loading',
         env: env
       })
+
+      if(url === undefined) {
+        this.setState({
+          status: ''
+        })
+        return
+      }
 
       $.ajax({
         url: url,
@@ -135,7 +140,10 @@ class SemanticDropdown extends SemanticComponent {
     }
   }
 
-  changeValue(value, isEvent) {
+  changeValue(value, silent=false, isEvent=false) {
+    if(silent)
+      return
+
     if(isEvent && value==='')
       return
 
@@ -147,7 +155,7 @@ class SemanticDropdown extends SemanticComponent {
 
   componentDidMount() {
     const onChange = (value) => {
-      this.changeValue(value, true)
+      this.changeValue(value, false, true)
     }
 
     const settings = {

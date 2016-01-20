@@ -76,10 +76,16 @@ class Basic extends React.Component {
           name: {
             displayName: 'Name'
           },
+          country: {
+            displayName: 'Country',
+            listOptions: {
+              url: '/countries.json'
+            }
+          },
           university: {
             displayName: 'University',
             listOptions: {
-              url: '/universities.json'
+              url: '/universities-{country}.json'
             }
           },
           course: {
@@ -87,6 +93,14 @@ class Basic extends React.Component {
             listOptions: {
               url: '/courses-{university}.json'
             }
+          }
+        }
+      },
+      phones: {
+        displayName: 'Phones',
+        items: {
+          '': {
+            displayName: '#'
           }
         }
       }
@@ -100,9 +114,15 @@ class Basic extends React.Component {
       others: 3,
       dia: undefined,
       options: [
-        { name: 'Lem', university: 1, course: 3 },
-        { name: 'Lez', university: 1, course: 2 },
-        { name: 'Lut', university: 2, course: 1 }
+        { name: 'Lem', country: 1, university: 1, course: 3 },
+        { name: 'Lez', country: 2, university: 1, course: 2 },
+        { name: 'Lut', country: 1, university: 2, course: 1 }
+      ],
+      phones: [
+        '998616346',
+        '923123456',
+        '912834753',
+        '917323499'
       ]
     }
 
@@ -122,15 +142,27 @@ class Basic extends React.Component {
         <Fields>
           <DatePicker name="dia" />
         </Fields>
-        <List name="options">
-          <Item>
-            <ThreeFields>
-              <Input name="name" />
-              <Dropdown name="university" />
-              <Dropdown name="course" />
-            </ThreeFields>
-          </Item>
-        </List>
+        <div className="ui segment">
+          <List name="options">
+            <Item defaultValue={{}}>
+              <ThreeFields>
+                <Input name="name" />
+                <Dropdown name="country" leftIcon="male" />
+                <Dropdown name="university" />
+                <Dropdown name="course" />
+              </ThreeFields>
+            </Item>
+          </List>
+        </div>
+        <div className="ui segment">
+          <List name="phones">
+            <Item defaultValue="">
+              <Fields>
+                <Input name="" />
+              </Fields>
+            </Item>
+          </List>
+        </div>
         <button type="submit">OK</button>
       </Form>
     )

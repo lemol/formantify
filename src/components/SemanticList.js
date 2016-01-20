@@ -19,32 +19,54 @@ class List1 extends Component {
     super(props)
   }
 
+  addNew() {
+    const value = this.getValue()
+    value.push({__is__new: true})
+    this.changeValue(value)
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    if(this.state._value !== nextState._value) {
+      alert('update')
+    }
+  }
+
   render() {
     const value = this.getValue()
 
     if(value==undefined)
       return <div/>
 
-    //alert(value.length)
-
     const res = value.map((c, i) => {
       const cl = this.props.children.props.children
       const clItem = this.props.children
 
-      //const item = _.clone(clItem)
       const item = React.createElement(clItem.type, {
         index: i,
         key: i,
         name: this.props.name,
         formsied: this.context.formsied,
         changeValue: ::this.changeValue,
-        getValue: ::this.getValue
+        getValue: ::this.getValue,
+        value: value,
+        defaultValue: clItem.props.defaultValue
       }, cl)
 
       return item
     })
 
-    return <div>{res}</div>
+    const add = (
+      <button type="button" className="ui button" onClick={::this.addNew}>
+        <i class="add icon"></i> Adicionar
+      </button>
+    )
+
+    return (
+      <div>
+        {res}
+        {add}
+      </div>
+    )
   }
 }
 
@@ -64,6 +86,15 @@ export class Item extends React.Component {
 
   componentDidMount() {
 
+    const isNew = this.props.value[this.props.index].__is__new
+    const value = this.props.value
+
+    if(isNew) {
+      value[this.props.index] = this.props.defaultValue
+      this.props.changeValue(value, true)
+      this.props.formsied.model[this.props.name] = value
+    }
+
     for(const i in this.items) {
       this.items[i].setInitialEnv(this.props.formsied.model)
     }
@@ -82,6 +113,7 @@ export class Item extends React.Component {
   }
 
   setup(component) {
+    component.shouldNotUpdateModel = true
     this.items.push(component)
     this.props.formsied.setup(component)
   }
@@ -111,7 +143,7 @@ export class Item extends React.Component {
   }
 
   getName(component) {
-    const name = `${this.props.name}[${this.props.index}].${component.props.name}`
+    const name = `${this.props.name}[${this.props.index}]${component.props.name && ('.' + component.props.name)}`
     return name
   }
 
