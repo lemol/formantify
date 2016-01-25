@@ -56,9 +56,11 @@ class List1 extends Component {
     })
 
     const add = (
-      <button type="button" className="ui button" onClick={::this.addNew}>
-        <i class="add icon"></i> Adicionar
-      </button>
+      <div style={{marginTop: '7px', paddingTop: '2px', borderTop: '1px solid rgba(0,0,0,0.06)'}}>
+        <a href="javascript:void(0)" onClick={::this.addNew}>
+          <i className="add circle icon"></i> Adicionar
+        </a>
+      </div>
     )
 
     return (
@@ -90,7 +92,7 @@ export class Item extends React.Component {
     const value = this.props.value
 
     if(isNew) {
-      value[this.props.index] = this.props.defaultValue
+      value[this.props.index] = _.clone(this.props.defaultValue)
       this.props.changeValue(value, true)
       this.props.formsied.model[this.props.name] = value
     }
@@ -147,8 +149,23 @@ export class Item extends React.Component {
     return name
   }
 
+  removeItem() {
+
+  }
+
   render() {
-    return <div>{this.props.children}</div>
+
+    const remove = (
+      <a href="javascript:void(0)" onClick={::this.removeItem}>
+        <i className="minus square icon"></i>
+      </a>
+    )
+
+    return (
+      <div>
+        {this.props.children}
+      </div>
+    )
   }
 }
 

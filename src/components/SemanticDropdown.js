@@ -94,6 +94,7 @@ class SemanticDropdown extends SemanticComponent {
   }
 
   componentWillUpdate(/*nextProps , nextState*/) {
+    console.log(`Updating component '${this.getName()}'`)
     $(this.getElement()).dropdown('clear')
   }
 

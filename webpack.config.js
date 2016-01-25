@@ -20,7 +20,7 @@ var config = getConfig({
 
 var src6 = path.join(__dirname, '..', '..', '..', 'formsy-react-es6', 'src')
 var fs = require('fs')
-if (fs.existsSync(src)) {
+if (fs.existsSync(src6)) {
   // Use the latest src
   config.resolve = { alias: { 'formsy-react': src6 } }
   config.module.loaders.push({

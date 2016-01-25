@@ -145,12 +145,12 @@ class Basic extends React.Component {
         <div className="ui segment">
           <List name="options">
             <Item defaultValue={{}}>
-              <ThreeFields>
+              <Fields>
                 <Input name="name" />
                 <Dropdown name="country" leftIcon="male" />
                 <Dropdown name="university" />
                 <Dropdown name="course" />
-              </ThreeFields>
+              </Fields>
             </Item>
           </List>
         </div>

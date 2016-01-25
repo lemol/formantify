@@ -81,6 +81,11 @@ export default class SemanticComponent extends React.Component {
   }
 
   getNameBase() {
+
+    if(!this.context.formList) {
+      return ''
+    }
+
     const spl = this.getName().split('.')
     let namebase = ''
 

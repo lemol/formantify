@@ -99,6 +99,15 @@ const Formsyie = Formsyied => class extends React.Component {
     this.saveEnv(component, env)
   }
 
+  unsetup(component) {
+    const q = this.inputs
+      .map((c, i) => [i, c])
+      .filter((ic, i) => ic[i].getName() === component.getName())
+
+    const ix = q[0]
+    delete this.inputs[ix]
+  }
+
   render() {
     return (
       <div className="ui form">
