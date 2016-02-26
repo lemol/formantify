@@ -103,6 +103,30 @@ class Basic extends React.Component {
             displayName: '#'
           }
         }
+      },
+      muito: {
+        displayName: 'Muito',
+        listOptions: {
+          url: '/courses-1.json'
+        }
+      },
+      father: {
+        displayName: 'Pai'
+      },
+      son: {
+        displayName: 'Filho'
+      },
+      mother: {
+        displayName: 'Mae',
+        listOptions: {
+          url: '/courses-1.json'
+        }
+      },
+      daughter: {
+        displayName: 'Filha',
+        listOptions: {
+          url: '/courses-1.json'
+        }
       }
     }
 
@@ -123,7 +147,25 @@ class Basic extends React.Component {
         '923123456',
         '912834753',
         '917323499'
-      ]
+      ],
+      muito: [1, 2],
+      father: 'aa',
+      son: 'ee',
+      mother: 2,
+      daughter: [1, 2]
+    }
+
+    const updm = function(n,v) {
+      if(v=='1')
+       return this.setValue([2, 3])
+      if(v=='2')
+       return this.setValue([0, 2])
+      if(v=='3')
+       return this.setValue([1, 3])
+    }
+
+    const updf = function(n,v) {
+      this.props.setValue(v)
     }
 
     return (
@@ -139,9 +181,18 @@ class Basic extends React.Component {
           <Dropdown name="various" />
           <Dropdown name="others" />
         </ThreeFields>
-        <Fields>
+        <TwoFields>
           <DatePicker name="dia" />
-        </Fields>
+          <Dropdown name="muito" fluid multiple search normal />
+        </TwoFields>
+        <TwoFields>
+          <Input name="father" />
+          <Input name="son" bind={{'father': updf}} />
+        </TwoFields>
+        <TwoFields>
+          <Dropdown name="mother" />
+          <Dropdown name="daughter" bind={{'mother': updm}} fluid multiple search normal />
+        </TwoFields>
         <div className="ui segment">
           <List name="options">
             <Item defaultValue={{}}>

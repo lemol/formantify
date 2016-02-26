@@ -11,7 +11,7 @@ import React from 'react'
 import SemanticComponent from './SemanticComponent'
 import { Componenty } from 'formsy-react'
 
-import { evalExpr, getEnv, updateEnv } from '../utils/Expressions.js'
+import { evalExpr, getEnv, updateEnv, parseArray } from '../utils/Expressions.js'
 
 import _ from 'underscore'
 import $ from 'jquery'
@@ -28,8 +28,24 @@ class SemanticDropdown extends SemanticComponent {
     this.state = {
       list: [],
       status: ' ',
-      env: {}
+      env: {},
+      canU: true
     }
+  }
+
+  setValue(value) {
+
+    if(Array.isArray(value)) {
+      super.setValue(value)
+      return this.forceUpdate()
+    }
+
+    if(typeof(value) === 'string') {
+      const valueArr = parseArray(value)
+      value = valueArr.length <= 1 ? value : valueArr
+    }
+
+    return super.setValue(value)
   }
 
   setSchema(schema) {
@@ -56,10 +72,14 @@ class SemanticDropdown extends SemanticComponent {
   getEnv(schema) {
     const url = schema.listOptions.url
 
-    if (url == undefined)
-      return super.getEnv()
+    let envs = super.getEnv()
 
-    return getEnv(url)
+    if (url != undefined) {
+      const urlEnvs = getEnv(url).map(e => ({name: e, fn: this.updateVar}))
+      envs = envs.concat(urlEnvs)
+    }
+
+    return envs
   }
 
   updateVar(varName, value) {
@@ -100,13 +120,39 @@ class SemanticDropdown extends SemanticComponent {
 
   componentDidUpdate() {
     let value = this.getValue()
+    let oldValue = $(this.getElement()).dropdown('get value')
+
+    //if(Array.isArray(value)) {
+      //if(value.join(',')==oldValue) {
+        //console.log('HIIIITTT')
+        //return
+      //}
+    //}
+
     $(this.getElement()).dropdown('refresh')
 
     if(this.state.list.length !== 0) {
       value = value == undefined ? '' : value
-      $(this.getElement()).dropdown('set selected', value.toString())
-      $(this.getElement()).dropdown('refresh')
+      value = Array.isArray(value) ? value.map(v => v.toString()) : value.toString()
+      $(this.getElement()).dropdown('set selected', value)
     }
+
+    //if(this.state.list.length !== 0) {
+      //value = value == undefined ? '' : value
+      //value = Array.isArray(value) ? value.map(v => v.toString()) : value.toString()
+
+      //if(Array.isArray(value)) {
+        ////console.log(`Update array ${value.length}`)
+        ////$(this.getElement()).dropdown('set exactly', value)
+        ////value.forEach(v => $(this.getElement()).dropdown('set exactly', v.toString()))
+        //this.props.onChangeArray && this.props.onChangeArray(value)
+      //}
+      //else {
+        //$(this.getElement()).dropdown('set selected', value)
+      //}
+      ////$(this.getElement()).dropdown('set exactly', value)
+      ////$(this.getElement()).dropdown('refresh')
+    //}
   }
 
   loadList(env, listOptions) {
@@ -172,7 +218,8 @@ class SemanticDropdown extends SemanticComponent {
   }
 
   elementClassName() {
-    const after = `${this.props.search?'search':''} ${this.state.status} selection`
+    const selection = this.props.floating ? '' : 'selection'
+    const after = `${this.props.fluid?'fluid':''} ${this.props.multiple?'multiple':''} ${this.props.search?'search':''} ${this.props.normal?'normal':''} ${this.props.floating?'floating':''} ${this.props.labeled?'labeled':''} ${this.props.button?'button':''} ${this.props.icon || this.props.itemIcon && !this.props.multiple?'icon':''} ${this.state.status} ${selection}`
     return super.elementClassName('', after)
   }
 
@@ -183,20 +230,22 @@ class SemanticDropdown extends SemanticComponent {
     fields.value = fields.value || 'value'
 
     const items = this.state.list.map(x =>
-      <div key={x[fields.value]} className="item" data-value={x[fields.value]}>
-        {this.props.icon?(<i className={`${x[fields.icon]} ${this.props.icon}`}></i>):undefined}
+      <div key={'i'+x[fields.value]} className="item" data-value={x[fields.value]}>
+        {this.props.itemIcon?(<i className={`${x[fields.icon]} ${this.props.itemIcon}`}></i>):undefined}
         {x[fields.text]}
       </div>
     )
 
     let search = undefined
     if (this.props.search) {
-      search = <input tabIndex="0" className="search" type="text" />
+      search = <input key={5} tabIndex="0" className="search" type="text" />
     }
+
+    const icon = !this.props.multiple ? (this.props.icon || 'dropdown') : 'dropdown'
 
     return [
       <input key={0} ref="value" name={this.getName()} value={this.getValue()} type="hidden" />,
-      <i key={1} className="dropdown icon"></i>,
+      <i key={1} className={`${icon} icon`}></i>,
       search,
       <div key={2} className="default text">{this.state.schema.placeholder}</div>,
       <div key={3} tabIndex="-1" className="menu transition hidden">

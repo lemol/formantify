@@ -63,16 +63,20 @@ const Formsyie = Formsyied => class extends React.Component {
     console.log(`Saving enviroment for '${component.getName()}' -> ${JSON.stringify(env)}`)
 
     for(const i in env) {
-      const varName = component.getNameBase() + env[i]
+      const varName = component.getNameBase() + env[i].name
       this.listeners[varName] = this.listeners[varName] || []
-      this.listeners[varName].push(component)
+
+      const fn = env[i].fn.bind(component)
+
+      this.listeners[varName].push(fn)
     }
   }
 
   bindFor(varName, value) {
     for(const i in this.listeners[varName]) {
-      const component = this.listeners[varName][i]
-      component.updateVar(varName, value)
+      const component = this.listeners[varName][i].component
+      const fn = this.listeners[varName][i]
+      fn(varName, value)
     }
   }
 
@@ -80,7 +84,9 @@ const Formsyie = Formsyied => class extends React.Component {
 
     const name = component.getName()
     const schema = getSchemaFor(this.props.schema, name)  //|| {listOptions: {}}
-    const value = component.props.initialValue || getValueFor(this.props.model, name)
+    let value = undefined
+
+    value = component.props.initialValue || getValueFor(this.props.model, name)
 
     console.log(`setup: ${name} -> ${JSON.stringify(schema)}`)
 

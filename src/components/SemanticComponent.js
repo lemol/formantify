@@ -29,13 +29,26 @@ export default class SemanticComponent extends React.Component {
     }
   }
 
+  componentDidUpdate(prevProps) {
+    return this.props.componentDidUpdate(prevProps)
+  }
+
   setInitialEnv(env) {
     console.log(`setting initial env for: ${this.getName()} -> ${JSON.stringify(env)}`)
     this.envInitialized = true
   }
 
   getEnv() {
-    return []
+
+    const envs = []
+
+    if(this.props.bind) {
+      for(const b in this.props.bind) {
+        envs.push({name: b, fn: this.props.bind[b]})
+      }
+    }
+
+    return envs
   }
 
   handleChangeValue(event) {
@@ -58,8 +71,8 @@ export default class SemanticComponent extends React.Component {
     if (!silent)
       this.changing(value)
 
-    this.props.onChange && this.props.onChange(this.props.getValue())
-    this.props.bind && this.props.bind(value)
+    typeof(this.props.onChange)==='function' && this.props.onChange(this.props.getValue())
+    typeof(this.props.bind)==='function' && this.props.bind(value)
   }
 
   setSchema(schema) {

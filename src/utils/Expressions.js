@@ -19,24 +19,40 @@ export function getValueFor(model, str) {
 
   match = rprop.exec(str)
   if (match != null) {
+    if (model[match[1]]===undefined || model[match[1]]===null)
+      model[match[1]] = {}
+
     result = model[match[1]][match[2]]
     return result
   }
 
   match = rpropArr.exec(str)
   if (match != null) {
+    if (model[match[1]]===undefined || model[match[1]]===null)
+      model[match[1]] = {}
+    if (model[match[1]][match[2]]===undefined || model[match[1]][match[2]]===null)
+      model[match[1]][match[2]] = {}
+
     result = model[match[1]][match[2]][match[3]]
     return result
   }
 
   match = rarrName.exec(str)
   if (match != null) {
+    if (model[match[1]]===undefined || model[match[1]]===null)
+      model[match[1]] = {}
+
     result = model[match[1]][match[2]]
     return result
   }
 
   match = rarrProp.exec(str)
   if (match != null) {
+    if (model[match[1]]===undefined || model[match[1]]===null)
+      model[match[1]] = {}
+    if (model[match[1]][match[2]]===undefined || model[match[1]][match[2]]===null)
+      model[match[1]][match[2]] = {}
+
     result = model[match[1]][match[2]][match[3]]
     return result
   }
@@ -101,7 +117,7 @@ export function evalExpr(env, expr, base = '') {
     const fullname = base + name
     const value = getValueFor(env, fullname)
 
-    if (value===undefined || value=='') {
+    if (value===undefined || value===null || value=='') {
       return undefined
     }
 
@@ -176,4 +192,8 @@ export function getSchemaFor(model, str) {
   }
 
   throw Error('Parse error')
+}
+
+export function parseArray(str) {
+  return str.split(',').map(s => s)
 }
