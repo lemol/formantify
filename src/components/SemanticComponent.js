@@ -163,7 +163,10 @@ export default class SemanticComponent extends React.Component {
       <button
         type="button"
         className={`ui ${options.className || ''} button`}
-        onClick={options.onClick}
+        onClick={e => {
+          const value = this.getValue()
+          return options.onClick && options.onClick(value, e)
+        }}
       >
         {icon}
         {text}

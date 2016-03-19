@@ -191,7 +191,7 @@ class SemanticDropdown extends SemanticComponent {
     if(silent)
       return
 
-    if(isEvent && value==='')
+    if(isEvent && value==='' && !this.props.multiple)
       return
 
     console.log(`Setting '${value}' for '${this.getName()}'`)
